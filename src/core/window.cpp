@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include "SDL2/SDL.h"
-#include "../glad/glad.h"
+#include "glad/glad.h"
 #include "window.h"
 
 minalear::GameWindow::GameWindow(const char *title, uint32_t width, uint32_t height) {
