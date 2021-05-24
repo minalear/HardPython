@@ -5,7 +5,7 @@ project "hardpython"
   kind "WindowedApp"
   language "C++"
   targetdir "bin/%{cfg.buildcfg}"
-  links { "SDL2" }
+  links { "SDL2", "dl" }
 
   files { "**.h", "**.cpp" }
 
