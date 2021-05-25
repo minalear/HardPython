@@ -15,7 +15,7 @@ minalear::GameWindow::GameWindow(const char *title, uint32_t width, uint32_t hei
 
   // Set multisampling
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 
   // SDL_GL_SetSwapInterval(0); // vsync
 

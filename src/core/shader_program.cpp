@@ -33,7 +33,7 @@ minalear::ShaderProgram::ShaderProgram(const char *v_source, const char *f_sourc
   checkShaderCompilation(f_shader_id);
 
   glAttachShader(program_id, v_shader_id);
-  glAttachShader(program_id, v_shader_id);
+  glAttachShader(program_id, f_shader_id);
   glLinkProgram(program_id);
 
   // TODO: check link status
