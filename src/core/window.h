@@ -10,6 +10,9 @@ namespace minalear {
   class GameWindow {
     uint32_t client_width;
     uint32_t client_height;
+
+    // TODO: Have width/height and scaled width/height for dpi scaling
+
     uint32_t start_time;
 
     SDL_Window *sdl_window;
