@@ -9,7 +9,7 @@
 namespace minalear {
   class SpriteBatch {
     uint32_t vao, vbo;
-    //ShaderProgram shader;
+    ShaderProgram shader;
 
     public:
       SpriteBatch();

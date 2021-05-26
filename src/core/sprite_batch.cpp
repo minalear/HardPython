@@ -2,8 +2,11 @@
 #include "sprite_batch.h"
 #include "texture.h"
 #include "glm/glm.hpp"
+#include "shaders.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
-minalear::SpriteBatch::SpriteBatch() {
+minalear::SpriteBatch::SpriteBatch() : shader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE) {
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
 
@@ -31,9 +34,26 @@ minalear::SpriteBatch::SpriteBatch() {
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+
+  // matrix setup
+  glm::mat4 proj, view, model;
+  proj = glm::ortho(0.f, 800.f, 480.f, 0.f, -1.f, 1.f);
+  view = glm::mat4(1.f);
+  model = glm::mat4(1.f);
+
+  shader.use();
+  shader.set_uniform("proj", proj);
+  shader.set_uniform("view", view);
+  shader.set_uniform("model", model);
 }
 
 void minalear::SpriteBatch::draw(Texture2D &texture, glm::vec2 pos) {
+  glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(pos, 0.f));
+  model = glm::scale(model, glm::vec3(texture.width(), texture.height(), 1.f));
+
+  shader.use();
+  shader.set_uniform("model", model);
+  
   // TODO: Implement actual batching
   texture.bind();
   glBindVertexArray(vao);
