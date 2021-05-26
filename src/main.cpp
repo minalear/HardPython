@@ -8,18 +8,15 @@
 #include "core/logger.h"
 
 // standard logger for program
-void fmt_logger(const char* msg, ...) {
-  va_list args;
-  va_start(args, msg);
+void fmt_logger(const char* msg, va_list args) {
   vprintf(msg, args);
-  printf("\n");
-  va_end(args);
+  putchar('\n');
 }
 
 int main(int argc, char* argv[]) {
   minalear::set_default_logger(fmt_logger);
-  minalear::log("Creating game window.");
-  auto game_window = minalear::GameWindow("Hard Python", 800, 480);
+  
+  auto game_window = minalear::GameWindow("Hard Python", 1280, 720);
 
   // setup blend/clear color
   glEnable(GL_MULTISAMPLE);

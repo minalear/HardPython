@@ -3,6 +3,7 @@
 #include "SDL2/SDL.h"
 #include "glad/glad.h"
 #include "window.h"
+#include "logger.h"
 
 minalear::GameWindow::GameWindow(const char *title, uint32_t width, uint32_t height) {
   // Initialize SDL and create a window
@@ -21,13 +22,22 @@ minalear::GameWindow::GameWindow(const char *title, uint32_t width, uint32_t hei
 
   // handle high dpi sizing
   float dpi = 96.0f;
-  if (SDL_GetDisplayDPI(0, NULL, &dpi, NULL) != 0) {
+  if (SDL_GetDisplayDPI(0, NULL, &dpi, NULL) != 0 || dpi == 0.f) {
     printf("Failed to get DPI info: %f\n", dpi);
-    dpi = 96.0f; // default to standard
+    dpi = 96.f; // default to standard
   }
 
   client_width = int(width * dpi / 96.0f);
   client_height = int(height * dpi / 96.0f);
+  
+  minalear::log(
+    "======================================\n"
+    "SDL Window created with OpenGL context\n"
+    "Dimensions (%d, %d)\n"
+    "DPI %f\n"
+    "======================================",
+    client_width, client_height, dpi
+  );
 
   sdl_window = SDL_CreateWindow(
     title,
