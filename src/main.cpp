@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdarg>
 
 #include "glad/glad.h"
 #include "core/window.h"
@@ -6,10 +7,22 @@
 #include "core/shaders.h"
 #include "core/sprite_batch.h"
 #include "core/texture.h"
+#include "core/logger.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+// standard logger for program
+void fmt_logger(const char* msg, ...) {
+  va_list args;
+  va_start(args, msg);
+  vprintf(msg, args);
+  printf("\n");
+  va_end(args);
+}
+
 int main(int argc, char* argv[]) {
+  minalear::set_default_logger(fmt_logger);
+  minalear::log("Creating game window.");
   auto game_window = minalear::GameWindow("Hard Python", 800, 480);
 
   // setup blend/clear color
