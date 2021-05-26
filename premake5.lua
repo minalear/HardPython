@@ -9,6 +9,10 @@ project "hardpython"
 
   files { "**.h", "**.cpp" }
 
+  --[[postbuildcommands {
+    "{COPY} content/* bin/%{cfg.buildcfg}/content"
+  }--]]
+
   filter "configurations:Debug"
     defines { "DEBUG" }
     symbols "On"

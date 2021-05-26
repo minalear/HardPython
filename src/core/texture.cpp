@@ -5,7 +5,7 @@
 #include "glad/glad.h"
 
 minalear::Texture2D::Texture2D(const char *path) {
-  uint32_t *data = stbi_load(path, &width, &height, &nBits, STBI_rgb_alpha);
+  auto data = stbi_load(path, &_width, &_height, &_nBits, STBI_rgb_alpha);
 
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
@@ -15,7 +15,7 @@ minalear::Texture2D::Texture2D(const char *path) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
   // glGenerateMipmap(GL_TEXTURE_2D);
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -24,11 +24,11 @@ minalear::Texture2D::Texture2D(const char *path) {
 }
 
 int minalear::Texture2D::width() {
-  return width;
+  return _width;
 }
 
 int minalear::Texture2D::height() {
-  return height;
+  return _height;
 }
 
 void minalear::Texture2D::bind() {
