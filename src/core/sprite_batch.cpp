@@ -3,10 +3,10 @@
 #include "texture.h"
 #include "glm/glm.hpp"
 #include "shaders.h"
-#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-minalear::SpriteBatch::SpriteBatch() : shader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE) {
+minalear::SpriteBatch::SpriteBatch(const int viewport_width, const int viewport_height)
+  : shader(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE) {
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
 
@@ -37,7 +37,7 @@ minalear::SpriteBatch::SpriteBatch() : shader(VERTEX_SHADER_SOURCE, FRAGMENT_SHA
 
   // matrix setup
   glm::mat4 proj, view, model;
-  proj = glm::ortho(0.f, 800.f, 480.f, 0.f, -1.f, 1.f);
+  proj = glm::ortho(0.f, float(viewport_width), float(viewport_height), 0.f, -1.f, 1.f);
   view = glm::mat4(1.f);
   model = glm::mat4(1.f);
 
@@ -47,16 +47,30 @@ minalear::SpriteBatch::SpriteBatch() : shader(VERTEX_SHADER_SOURCE, FRAGMENT_SHA
   shader.set_uniform("model", model);
 }
 
+// Drawing
+void minalear::SpriteBatch::_draw(Texture2D &texture, glm::mat4 model) {
+  shader.use();
+  shader.set_uniform("model", model);
+
+  // TODO: Implement batching and deferred rendering
+  texture.bind();
+  glBindVertexArray(vao);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(0);
+}
+
+void minalear::SpriteBatch::draw(Texture2D &texture, glm::mat4 model) {
+  _draw(texture, model);
+}
 void minalear::SpriteBatch::draw(Texture2D &texture, glm::vec2 pos) {
   glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(pos, 0.f));
   model = glm::scale(model, glm::vec3(texture.width(), texture.height(), 1.f));
 
-  shader.use();
-  shader.set_uniform("model", model);
-  
-  // TODO: Implement actual batching
-  texture.bind();
-  glBindVertexArray(vao);
-  glDrawArrays(GL_TRIANGLES, 0, 6); // two triangles make a quad
-  glBindVertexArray(0);
+  _draw(texture, model);
+}
+void minalear::SpriteBatch::draw(Texture2D &texture, glm::vec2 pos, glm::vec2 scale) {
+  glm::mat4 model = glm::translate(glm::mat4(1.f), glm::vec3(pos, 0.f));
+  model = glm::scale(model, glm::vec3(texture.width(), texture.height(), 1.f) * glm::vec3(scale, 1.f));
+
+  _draw(texture, model);
 }

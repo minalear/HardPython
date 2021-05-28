@@ -22,10 +22,10 @@ minalear::GameWindow::GameWindow(const char *title, uint32_t width, uint32_t hei
 
   // handle high dpi sizing
   float dpi = 96.0f;
-  if (SDL_GetDisplayDPI(0, NULL, &dpi, NULL) != 0 || dpi == 0.f) {
+  /*if (SDL_GetDisplayDPI(0, NULL, &dpi, NULL) != 0 || dpi == 0.f) {
     printf("Failed to get DPI info: %f\n", dpi);
     dpi = 96.f; // default to standard
-  }
+  }*/
 
   client_width = int(width * dpi / 96.0f);
   client_height = int(height * dpi / 96.0f);

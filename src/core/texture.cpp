@@ -8,7 +8,8 @@
 minalear::Texture2D::Texture2D(const char *path) {
   auto data = stbi_load(path, &_width, &_height, &_nBits, STBI_rgb_alpha);
 
-  minalear::log("Creating texture from path %s", path);
+  minalear::log("==> Texture - %s", path);
+  minalear::log("Dimensions: %d x %d", _width, _height);
 
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);

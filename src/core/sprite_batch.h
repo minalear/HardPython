@@ -11,10 +11,15 @@ namespace minalear {
     uint32_t vao, vbo;
     ShaderProgram shader;
 
+    void _draw(Texture2D &texture, glm::mat4 model);
+
     public:
-      SpriteBatch();
+      SpriteBatch(const int, const int);
       // TODO: Add destructor
+
+      void draw(Texture2D &texture, glm::mat4 model);
       void draw(Texture2D &texture, glm::vec2 pos);
+      void draw(Texture2D &texture, glm::vec2 pos, glm::vec2 scale);
   };
 }
 
