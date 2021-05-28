@@ -10,10 +10,16 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "game/entity.h"
+
 // standard logger for program
 void fmt_logger(const char* msg, va_list args) {
   vprintf(msg, args);
   putchar('\n');
+}
+
+float vec_len_sqr(glm::vec2 vec) {
+  return (vec.x * vec.x + vec.y * vec.y);
 }
 
 int main(int argc, char* argv[]) {
@@ -42,6 +48,10 @@ int main(int argc, char* argv[]) {
   //glm::mat4 model = glm::scale(glm::mat4(1.f), glm::vec3(viewport_width, viewport_height, 1.f));
   glm::mat4 model = glm::scale(glm::mat4(1.f), glm::vec3(512.f, 512.f, 1.f));
 
+  Entity entities[] = {
+    Entity(glm::vec2(0.f, 0.f), glm::vec2(100.f, 0.f))
+  };
+
   SDL_Event window_event;
   while (true) {
     // handle input
@@ -57,29 +67,52 @@ int main(int argc, char* argv[]) {
       dt -= update_step;
       // minalear::log("update step: %f", dt);
 
-      const float speed = 250.f;
+      const float speed = 50.f;
       if (minalear::key_down(SDL_SCANCODE_W)) {
-        entity_pos.y -= speed * update_step;
+        //entity_pos.y -= speed * update_step;
       }
       if (minalear::key_down(SDL_SCANCODE_S)) {
-        entity_pos.y += speed * update_step;
+        //entity_pos.y += speed * update_step;
       }
       if (minalear::key_down(SDL_SCANCODE_A)) {
-        entity_pos.x -= speed * update_step;
+        //entity_pos.x -= speed * update_step;
+        entities[0].apply_force(glm::vec2(-speed, 0.f));
       }
       if (minalear::key_down(SDL_SCANCODE_D)) {
-        entity_pos.x += speed * update_step;
+        //entity_pos.x += speed * update_step;
+        entities[0].apply_force(glm::vec2(speed, 0.f));
       }
 
       if (minalear::key_down(SDL_SCANCODE_SPACE)) {
-        minalear::log("pos: %fx%f", entity_pos.x, entity_pos.y);
+        //minalear::log("pos: %fx%f", entity_pos.x, entity_pos.y);
+        entities[0].apply_force(glm::vec2(0.f, -30.f));
       }
+    }
+
+    // update entities
+    for (int i = 0; i < sizeof(entities) / sizeof(entities[0]); i++) {
+      // apply friction
+      glm::vec2 friction = entities[i].velocity();
+      if (vec_len_sqr(friction) != 0.f) {
+        friction = glm::normalize(friction) * -1.f;
+        entities[i].apply_force(friction);
+
+        const glm::vec2 vel = entities[i].velocity();
+        //minalear::log("friction: (%f, %f)", friction.x, friction.y);
+        //minalear::log("velocity: (%f, %f)", vel.x, vel.y);
+      }
+
+      // apply gravity
+      entities[i].apply_force(glm::vec2(0.f, 9.8f));
+      entities[i].update(dt);
     }
 
     // rendering logic
     glClear(GL_COLOR_BUFFER_BIT);
-    sprite_batch.draw(texture, entity_pos);
-    //sprite_batch.draw(texture, model);
+    //sprite_batch.draw(texture, entity_pos);
+    for (int i = 0; i < sizeof(entities) / sizeof(entities[0]); i++) {
+      entities[i].debug_draw(sprite_batch, texture);
+    }
     game_window.swap_buffers();
   }
 
