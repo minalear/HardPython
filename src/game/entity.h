@@ -6,14 +6,17 @@
 #include "../core/texture.h"
 
 class Entity {
+protected:
   glm::vec2 pos;
   glm::vec2 vel;
 
 public:
-  Entity(glm::vec2 pos, glm::vec2 vel);
+  Entity();
+  Entity(glm::vec2 pos);
 
   void debug_draw(minalear::SpriteBatch &sb, minalear::Texture2D &text);
-  void update(float dt);
+  virtual void draw(minalear::SpriteBatch &sb);
+  virtual void update(float dt);
 
   void apply_force(glm::vec2 impulse);
 
