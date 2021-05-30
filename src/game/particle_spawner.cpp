@@ -3,7 +3,7 @@
 #include "../core/logger.h"
 
 ParticleSpawner::ParticleSpawner(glm::vec2 pos) :
-  Entity(pos), 
+  Entity(pos),
   particle_count(0),
   particle_texture("content/textures/particle.png"),
   timer(0.f) { }

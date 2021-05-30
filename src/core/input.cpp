@@ -1,3 +1,4 @@
+#include <cstring>
 #include "input.h"
 #include "SDL2/SDL.h"
 #include "logger.h"

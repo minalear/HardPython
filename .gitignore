@@ -2,3 +2,9 @@ bin/
 obj/
 Makefile
 *.make
+.vs/
+*.dll
+*.lib
+*.sln
+*.vcxproj*
+x64/
