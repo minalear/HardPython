@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdarg>
+#include <functional>
 
 #define SDL_MAIN_HANDLED
 #include "SDL2/SDL.h"
@@ -13,9 +14,14 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "core/event/event.h"
+
 #include "game/entity.h"
 #include "game/world.h"
 #include "game/particle_spawner.h"
+
+int ticks = 0;
+auto dispatcher = minalear::EventDispatcher();
 
 // standard logger for program
 void fmt_logger(const char* msg, va_list args) {
@@ -23,12 +29,25 @@ void fmt_logger(const char* msg, va_list args) {
   putchar('\n');
 }
 
-float vec_len_sqr(glm::vec2 vec) {
-  return (vec.x * vec.x + vec.y * vec.y);
+void event_callback(const minalear::Event& event) {
+  if (event.type == minalear::EventType::Tick) {
+    ticks++;
+    minalear::log("tick: %d", ticks);
+    if (ticks >= 1000) {
+      dispatcher.Post(minalear::ForceQuit());
+    }
+  }
+}
+
+
+void other_callback(const minalear::Event& event) {
+  if (event.type == minalear::EventType::ForceQuit) {
+    exit(1);
+  }
 }
 
 int main(int argc, char* argv[]) {
-    SDL_SetMainReady();
+  SDL_SetMainReady();
 
   minalear::set_default_logger(fmt_logger);
  
@@ -51,13 +70,8 @@ int main(int argc, char* argv[]) {
   float dt = game_window.dt();
   const float update_step = 0.01667f;
 
-  glm::vec2 entity_pos = glm::vec2(0.f, 0.f);
-  //glm::mat4 model = glm::scale(glm::mat4(1.f), glm::vec3(viewport_width, viewport_height, 1.f));
-  glm::mat4 model = glm::scale(glm::mat4(1.f), glm::vec3(512.f, 512.f, 1.f));
-
-  World world;
-  const glm::vec2 pos = glm::vec2(viewport_width, viewport_height) * 0.5f;
-  world.add_entity(new ParticleSpawner(pos));
+  dispatcher.Subscribe(event_callback);
+  dispatcher.Subscribe(other_callback);
 
   SDL_Event window_event;
   while (true) {
@@ -66,18 +80,25 @@ int main(int argc, char* argv[]) {
     if (SDL_PollEvent(&window_event)) {
       if (window_event.type == SDL_QUIT) break;
       if (minalear::key_down(SDL_SCANCODE_ESCAPE)) break;
+
+      if (window_event.type == SDL_MOUSEMOTION) {
+        dispatcher.Post(
+          minalear::MouseMoveEvent(glm::vec2( float(window_event.motion.x), float(window_event.motion.y) ))
+        );
+      }
     }
 
     // update logic
     dt += game_window.dt();
     if (dt >= update_step) {
       dt -= update_step;
-      world.update(update_step);
+
+      dispatcher.Post(minalear::TickEvent());
     }
 
     // rendering logic
     glClear(GL_COLOR_BUFFER_BIT);
-    world.draw(sprite_batch);
+    // Render Here
     game_window.swap_buffers();
   }
 
