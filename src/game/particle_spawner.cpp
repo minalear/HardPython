@@ -1,12 +1,28 @@
 #include "particle_spawner.h"
 #include "glm/glm.hpp"
 #include "../core/logger.h"
+#include "../core/event/event.h"
+
+extern minalear::EventDispatcher dispatcher;
 
 ParticleSpawner::ParticleSpawner(glm::vec2 pos) :
   Entity(pos),
   particle_count(0),
   particle_texture("content/textures/particle.png"),
-  timer(0.f) { }
+  timer(0.f) 
+{
+  dispatcher.Subscribe([=](const minalear::Event& event) {
+    event_callback(event);
+  });
+}
+
+void ParticleSpawner::event_callback(const minalear::Event& event) {
+  if (event.type == minalear::EventType::MouseMove) {
+    auto pos = dynamic_cast<const minalear::MouseMoveEvent&>(event).pos;
+    this->pos = pos;
+  }
+}
+
 
 void ParticleSpawner::update(float dt) {
   // particle spawning

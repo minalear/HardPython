@@ -67,11 +67,13 @@ int main(int argc, char* argv[]) {
   auto sprite_batch = minalear::SpriteBatch(viewport_width, viewport_height);
   auto texture = minalear::Texture2D("content/textures/placeholder.png");
 
-  float dt = game_window.dt();
-  const float update_step = 0.01667f;
+  float timer = game_window.dt();
+  const float dt = 0.01667f;
 
-  dispatcher.Subscribe(event_callback);
-  dispatcher.Subscribe(other_callback);
+  //dispatcher.Subscribe(event_callback);
+  //dispatcher.Subscribe(other_callback);
+
+  auto spawner = ParticleSpawner(glm::vec2(640.f, 480.f));
 
   SDL_Event window_event;
   while (true) {
@@ -89,16 +91,16 @@ int main(int argc, char* argv[]) {
     }
 
     // update logic
-    dt += game_window.dt();
-    if (dt >= update_step) {
-      dt -= update_step;
-
+    timer += game_window.dt();
+    if (timer >= dt) {
+      timer -= dt;
       dispatcher.Post(minalear::TickEvent());
+      spawner.update(dt);
     }
 
     // rendering logic
     glClear(GL_COLOR_BUFFER_BIT);
-    // Render Here
+    spawner.draw(sprite_batch);
     game_window.swap_buffers();
   }
 
