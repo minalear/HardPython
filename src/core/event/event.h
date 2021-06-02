@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <vector>
-#include <string>
 #include "glm/glm.hpp"
 
 namespace minalear {
@@ -14,35 +13,47 @@ namespace minalear {
 		MouseMove,
 		MouseButtonDown,
 		MouseButtonUp,
-		Tick,
-		ForceQuit
+		Tick
 	};
 
 	class Event {
 	public:
 		EventType type;
-		Event(EventType type);
-
-		virtual const char* ToString() const = 0;
+		Event(EventType type) : type(type) { }
 	};
 
-	class TickEvent : public Event {
+	class WindowResizeEvent : public Event {
 	public:
-		TickEvent();
-		const char* ToString() const override;
+		int viewport_width, viewport_height;
+		WindowResizeEvent(int width, int height)
+			: Event(EventType::WindowResize), viewport_width(width), viewport_height(height) { }
 	};
 
-	class ForceQuit : public Event {
+	class KeyDownEvent : public Event {
 	public:
-		ForceQuit();
-		const char* ToString() const override;
+
 	};
+	class KeyUpEvent : public Event {
+
+	};
+
+	
 
 	class MouseMoveEvent : public Event {
 	public:
 		glm::vec2 pos;
-		MouseMoveEvent(glm::vec2 pos);
-		const char* ToString() const override;
+		MouseMoveEvent(glm::vec2 pos) : Event(EventType::MouseMove), pos(pos) { }
+	};
+	class MouseButtonDownEvent : public Event {
+
+	};
+	class MouseButtonUpEvent : public Event {
+
+	};
+
+	class TickEvent : public Event {
+	public:
+		TickEvent() : Event(EventType::Tick) { }
 	};
 
 

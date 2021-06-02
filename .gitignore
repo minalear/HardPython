@@ -1,10 +1,18 @@
+# Build stuff
 bin/
 obj/
-Makefile
-*.make
-.vs/
 *.dll
 *.lib
+x64/
+
+# IDE/Project files
+.vs/
+.idea/
 *.sln
 *.vcxproj*
-x64/
+
+# Cmake/Build
+CMakeLists.txt
+cmake-build-debug/
+Makefile
+*.make

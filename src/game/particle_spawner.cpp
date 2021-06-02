@@ -3,7 +3,7 @@
 #include "../core/logger.h"
 #include "../core/event/event.h"
 
-extern minalear::EventDispatcher dispatcher;
+//extern minalear::EventDispatcher dispatcher;
 
 ParticleSpawner::ParticleSpawner(glm::vec2 pos) :
   Entity(pos),
@@ -11,15 +11,15 @@ ParticleSpawner::ParticleSpawner(glm::vec2 pos) :
   particle_texture("content/textures/particle.png"),
   timer(0.f) 
 {
-  dispatcher.Subscribe([=](const minalear::Event& event) {
+  /*dispatcher.Subscribe([=](const minalear::Event& event) {
     event_callback(event);
-  });
+  });*/
 }
 
 void ParticleSpawner::event_callback(const minalear::Event& event) {
   if (event.type == minalear::EventType::MouseMove) {
-    auto pos = dynamic_cast<const minalear::MouseMoveEvent&>(event).pos;
-    this->pos = pos;
+    /*auto pos = dynamic_cast<const minalear::MouseMoveEvent&>(event).pos;
+    this->pos = pos;*/
   }
 }
 

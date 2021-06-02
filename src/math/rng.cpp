@@ -3,7 +3,7 @@
 #include "rng.h"
 
 void rng::init() {
-  srand(time(NULL));
+  srand((unsigned int)time(NULL));
 }
 
 int rng::next_int() {
