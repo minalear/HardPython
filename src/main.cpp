@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <cstdarg>
 #include <functional>
 
 #define SDL_MAIN_HANDLED
@@ -8,22 +7,23 @@
 #include "glad/glad.h"
 #include "core/window.h"
 #include "core/sprite_batch.h"
-#include "core/texture.h"
 #include "core/logger.h"
 #include "core/input.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 #include "core/event/event.h"
-
-#include "game/entity.h"
-#include "game/world.h"
-#include "game/particle_spawner.h"
 
 // standard logger for program
 void fmt_logger(const char* msg, va_list args) {
   vprintf(msg, args);
   putchar('\n');
+}
+
+void callback(const minalear::Event& event) {
+  if (event.type == minalear::EventType::KeyUp) {
+    minalear::log("key up: %u", event.key.scancode);
+  } else if (event.type == minalear::EventType::KeyDown) {
+    minalear::log("key down: %u, repeat: %s", event.key.scancode, event.key.repeat ? "true" : "false");
+  }
 }
 
 int main(int argc, char* argv[]) {
@@ -49,19 +49,41 @@ int main(int argc, char* argv[]) {
   float timer = game_window.dt();
   const float step = 0.01667f;
 
+  using minalear::EventType;
+  using minalear::Event;
+  using minalear::KeyboardEvent;
+
+  minalear::g_EventHandler.Subscribe(callback);
+
   SDL_Event window_event;
   while (true) {
     // handle input
     minalear::handle_input();
     if (SDL_PollEvent(&window_event)) {
       if (window_event.type == SDL_QUIT) break;
-      if (minalear::key_down(SDL_SCANCODE_ESCAPE)) break;
+      else if (window_event.type == SDL_KEYUP) {
+        Event event = Event(EventType::KeyUp);
+        event.key = KeyboardEvent { window_event.key.keysym.scancode, false };
+        minalear::g_EventHandler.Post(event);
+      } else if (window_event.type == SDL_KEYDOWN) {
+        if (window_event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) break; // quit game
+        Event event = Event(EventType::KeyDown);
+        event.key = KeyboardEvent {
+          window_event.key.keysym.scancode, // Scancode
+          bool(window_event.key.repeat) // Repeat
+        };
+        minalear::g_EventHandler.Post(event);
+      }
     }
 
     // update logic
     timer += game_window.dt();
     if (timer >= step) {
       timer -= step;
+
+      Event event = Event(EventType::Tick);
+      event.tick = minalear::TickEvent();
+      minalear::g_EventHandler.Post(event);
     }
 
     // rendering logic

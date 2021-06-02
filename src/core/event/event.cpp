@@ -10,3 +10,5 @@ void EventDispatcher::Post(const Event& event) const {
 		observer(event);
 	}
 }
+
+EventDispatcher minalear::g_EventHandler = EventDispatcher{};

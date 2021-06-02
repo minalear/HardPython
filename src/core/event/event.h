@@ -3,7 +3,9 @@
 
 #include <functional>
 #include <vector>
+#include <memory>
 #include "glm/glm.hpp"
+#include "SDL2/SDL_scancode.h"
 
 namespace minalear {
 	enum class EventType {
@@ -16,46 +18,23 @@ namespace minalear {
 		Tick
 	};
 
-	class Event {
-	public:
-		EventType type;
-		Event(EventType type) : type(type) { }
+	struct TickEvent { };
+
+	// KeyDown/KeyUp
+	struct KeyboardEvent {
+    SDL_Scancode scancode;
+    bool repeat;
 	};
 
-	class WindowResizeEvent : public Event {
-	public:
-		int viewport_width, viewport_height;
-		WindowResizeEvent(int width, int height)
-			: Event(EventType::WindowResize), viewport_width(width), viewport_height(height) { }
+	struct Event {
+    EventType type;
+    Event(EventType type) : type(type) { }
+
+    union {
+      TickEvent tick;
+      KeyboardEvent key;
+    };
 	};
-
-	class KeyDownEvent : public Event {
-	public:
-
-	};
-	class KeyUpEvent : public Event {
-
-	};
-
-	
-
-	class MouseMoveEvent : public Event {
-	public:
-		glm::vec2 pos;
-		MouseMoveEvent(glm::vec2 pos) : Event(EventType::MouseMove), pos(pos) { }
-	};
-	class MouseButtonDownEvent : public Event {
-
-	};
-	class MouseButtonUpEvent : public Event {
-
-	};
-
-	class TickEvent : public Event {
-	public:
-		TickEvent() : Event(EventType::Tick) { }
-	};
-
 
 	using EventFn = std::function<void(const Event&)>;
 	class EventDispatcher {
@@ -66,6 +45,8 @@ namespace minalear {
 		void Subscribe(const EventFn& callback);
 		void Post(const Event& event) const;
 	};
+
+	extern EventDispatcher g_EventHandler;
 }
 
 #endif
